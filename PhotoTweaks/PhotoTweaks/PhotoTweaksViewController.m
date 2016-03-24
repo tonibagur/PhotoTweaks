@@ -19,8 +19,9 @@
 
 @implementation PhotoTweaksViewController
 
-- (instancetype)initWithImage:(UIImage *)image
+- (instancetype)initWithImage:(UIImage *)image singleMode:(BOOL) mode
 {
+    self.singleMode=mode;
     if (self = [super init]) {
         _image = image;
         _autoSaveToLibray = YES;
@@ -46,7 +47,7 @@
 
 - (void)setupSubviews
 {
-    self.photoView = [[PhotoTweakView alloc] initWithFrame:self.view.bounds image:self.image];
+    self.photoView = [[PhotoTweakView alloc] initWithFrame:self.view.bounds image:self.image singleMode:self.singleMode];
     self.photoView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view addSubview:self.photoView];
     

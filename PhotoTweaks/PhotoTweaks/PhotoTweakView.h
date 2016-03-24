@@ -37,7 +37,9 @@
 @property (nonatomic, strong, readonly) UISlider *slider;
 @property (nonatomic, strong, readonly) UIButton *resetBtn;
 
-- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image;
+@property BOOL singleMode;
+
+- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image singleMode:(BOOL) singleMode;
 - (CGPoint)photoTranslation;
 
 @end

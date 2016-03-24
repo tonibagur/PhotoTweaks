@@ -15,9 +15,9 @@ static const int kGridLines = 9;
 
 static const CGFloat kCropViewHotArea = 16;
 static const CGFloat kMinimumCropArea = 60;
-static const CGFloat kMaximumCanvasWidthRatio = 0.9;
-static const CGFloat kMaximumCanvasHeightRatio = 0.7;
-static const CGFloat kCanvasHeaderHeigth = 60;
+static const CGFloat kMaximumCanvasWidthRatio = 1;
+static const CGFloat kMaximumCanvasHeightRatio = 0.9;
+static const CGFloat kCanvasHeaderHeigth = 20;
 static const CGFloat kCropViewCornerLength = 22;
 
 static CGFloat distanceBetweenPoints(CGPoint point0, CGPoint point1)
@@ -155,9 +155,11 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
 
 @implementation CropView
 
-- (instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame;
 {
+
     if (self = [super initWithFrame:frame]) {
+        NSLog(@"x:%f,y:%f,w:%f,h:%f",frame.origin.x,frame.origin.y,frame.size.width,frame.size.height);
         self.layer.borderColor = [UIColor cropLineColor].CGColor;
         self.layer.borderWidth = 1;
         
@@ -219,14 +221,14 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
     return self;
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesBegan2:(NSSet *)touches withEvent:(UIEvent *)event
 {
     if ([touches count] == 1) {
         [self updateCropLines:NO];
     }
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesMoved2:(NSSet *)touches withEvent:(UIEvent *)event
 {
     if ([touches count] == 1) {
         CGPoint location = [[touches anyObject] locationInView:self];
@@ -303,7 +305,7 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
     }
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesEnded2:(NSSet *)touches withEvent:(UIEvent *)event
 {
     if ([self.delegate respondsToSelector:@selector(cropEnded:)]) {
         [self.delegate cropEnded:self];
@@ -448,12 +450,15 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
 @property (nonatomic, assign) CGFloat centerY;
 @property (nonatomic, assign) CGPoint originalPoint;
 
+
+
 @end
 
 @implementation PhotoTweakView
 
-- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image
+- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image  singleMode:(BOOL) singleMode
 {
+    self.singleMode=singleMode;
     if (self = [super init]) {
         
         self.frame = frame;
@@ -461,13 +466,23 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
         _image = image;
         
         // scale the image
+//        _maximumCanvasSize = CGSizeMake(kMaximumCanvasWidthRatio * self.frame.size.width,
+//                                            kMaximumCanvasHeightRatio * self.frame.size.height - kCanvasHeaderHeigth);
         _maximumCanvasSize = CGSizeMake(kMaximumCanvasWidthRatio * self.frame.size.width,
-                                            kMaximumCanvasHeightRatio * self.frame.size.height - kCanvasHeaderHeigth);
+                                        kMaximumCanvasHeightRatio * self.frame.size.height);
         
         CGFloat scaleX = image.size.width / self.maximumCanvasSize.width;
-        CGFloat scaleY = image.size.height / self.maximumCanvasSize.height;
-        CGFloat scale = MAX(scaleX, scaleY);
+        CGFloat scaleY = image.size.height / self.maximumCanvasSize.width;
+        CGFloat scale = MIN(scaleX, scaleY);
         CGRect bounds = CGRectMake(0, 0, image.size.width / scale, image.size.height / scale);
+        //CGRect bounds2 = CGRectMake(0, 0, image.size.width / scale, image.size.width / scale);
+        CGRect bounds2;
+        if (self.singleMode){
+            bounds2 = CGRectMake(0, 0, self.frame.size.width, self.frame.size.width);
+        } else{
+            bounds2 = CGRectMake(0, 0, self.frame.size.height*0.48*0.9, self.frame.size.height*0.9);
+        }
+        
         _originalSize = bounds.size;
         
         _centerY = self.maximumCanvasSize.height / 2 + kCanvasHeaderHeigth;
@@ -500,7 +515,7 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
         _scrollView.photoContentView = self.photoContentView;
         [self.scrollView addSubview:_photoContentView];
         
-        _cropView = [[CropView alloc] initWithFrame:self.scrollView.frame];
+        _cropView = [[CropView alloc] initWithFrame:bounds2];
         _cropView.center = self.scrollView.center;
         _cropView.delegate = self;
         [self addSubview:_cropView];
@@ -540,7 +555,10 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
         [self addSubview:_resetBtn];
         
         _originalPoint = [self convertPoint:self.scrollView.center toView:self];
+        //[self setBackgroundColor:[UIColor greenColor]];
     }
+    [self sliderValueChanged:self];
+    [self sliderTouchEnded:self];
     return self;
 }
 
@@ -717,11 +735,13 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
         self.scrollView.minimumZoomScale = 1;
         [self.scrollView setZoomScale:1 animated:NO];
         
-        self.cropView.frame = self.scrollView.frame;
+        //self.cropView.frame = self.scrollView.frame;
         self.cropView.center = self.scrollView.center;
         [self updateMasks:NO];
         
         [self.slider setValue:0.5 animated:YES];
+        [self sliderValueChanged:self];
+        [self sliderTouchEnded:self];
     }];
 }
 
