@@ -763,7 +763,7 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
         
 
     }];
-    [self sliderValueChanged:self];
+    [self sliderValueChanged:self]; 
 }
 
 - (CGPoint)photoTranslation

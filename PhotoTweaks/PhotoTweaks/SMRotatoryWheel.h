@@ -19,8 +19,9 @@
 @property CGFloat initialAngle;
 @property CGFloat currentAngle;
 @property CGRect maskRect;
+@property CGFloat initialRotation;
 
-- (id) initWithFrame:(CGRect)frame andDelegate:(id)del withSections:(int)sectionsNumber;
+- (id) initWithFrame:(CGRect)frame andDelegate:(id)del withSections:(int)sectionsNumber withHiddenMask:(CGRect) hiddenMask withInitialRotation:(CGFloat) initialRotation;
 
 - (void) resetRotation;
 

@@ -112,9 +112,18 @@
 }
 
 -(void) setupWheel{
-    self.wheel = [[SMRotatoryWheel alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.view.frame)/2.-CGRectGetWidth(self.view.frame)/2+CGRectGetWidth(self.view.frame)*0.15, CGRectGetWidth(self.view.frame), CGRectGetWidth(self.view.frame))
-                                                        andDelegate:self
-                                                       withSections:180];
+    if (_singleMode){
+        CGRect frame=CGRectMake(0, CGRectGetHeight(self.view.frame)/2.-CGRectGetWidth(self.view.frame)/2+CGRectGetWidth(self.view.frame)*0.15, CGRectGetWidth(self.view.frame), CGRectGetWidth(self.view.frame));
+        self.wheel = [[SMRotatoryWheel alloc] initWithFrame:frame
+                                                andDelegate:self
+                                               withSections:180 withHiddenMask:CGRectMake(0, frame.size.height-frame.size.width*0.17, frame.size.width, frame.size.width*0.17) withInitialRotation:M_PI/2.];
+    } else{
+        CGRect frame=CGRectMake(0, CGRectGetHeight(self.view.frame)/2.-CGRectGetWidth(self.view.frame)/2+CGRectGetWidth(self.view.frame)*0.15, CGRectGetWidth(self.view.frame), CGRectGetWidth(self.view.frame));
+        self.wheel = [[SMRotatoryWheel alloc] initWithFrame:frame
+                                                andDelegate:self
+                                               withSections:180 withHiddenMask:CGRectMake(frame.size.width*0.88, 0, frame.size.width*0.12, frame.size.width) withInitialRotation:0];
+    }
+
     //wheel.backgroundColor=[UIColor greenColor];
     self.wheel.userInteractionEnabled=YES;
     // 3 - Add wheel to view

@@ -28,7 +28,8 @@ CGFloat deltaAngle,angleDifference;
 
 @synthesize delegate, container, numberOfSections;
 
-- (id) initWithFrame:(CGRect)frame andDelegate:(id)del withSections:(int)sectionsNumber {
+- (id) initWithFrame:(CGRect)frame andDelegate:(id)del withSections:(int)sectionsNumber  withHiddenMask:(CGRect) hiddenMask withInitialRotation:(CGFloat) initialRotation{
+    self.initialRotation=initialRotation;
     // 1 - Call super init
     if ((self = [super initWithFrame:frame])) {
         // 2 - Set properties
@@ -40,7 +41,7 @@ CGFloat deltaAngle,angleDifference;
         
         
         CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
-        self.maskRect = CGRectMake(0, frame.size.height-frame.size.width*0.17, frame.size.width, frame.size.width*0.17);
+        self.maskRect = hiddenMask;
         
         // Create a path with the rectangle in it.
         CGPathRef path = CGPathCreateWithRect(self.maskRect, NULL);
@@ -133,7 +134,7 @@ CGFloat deltaAngle,angleDifference;
 
 - (void) resetRotation{
     self.currentAngle=0;
-    container.transform=CGAffineTransformRotate(CGAffineTransformIdentity, M_PI/2.);
+    container.transform=CGAffineTransformRotate(CGAffineTransformIdentity, self.initialRotation);
     
 }
 
