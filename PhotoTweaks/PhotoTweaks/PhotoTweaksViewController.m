@@ -51,6 +51,10 @@
     self.photoView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view addSubview:self.photoView];
     
+    UIView* buttonBar=[[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.view.frame)*0.93, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame)*0.07 )];
+    buttonBar.backgroundColor=[UIColor blackColor];
+    buttonBar.alpha=0.85;
+    [self.view addSubview:buttonBar];
     UIButton *cancelBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     cancelBtn.frame = CGRectMake(8, CGRectGetHeight(self.view.frame) - 40, 60, 40);
     cancelBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
