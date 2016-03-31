@@ -65,6 +65,26 @@
     [cancelBtn addTarget:self action:@selector(cancelBtnTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:cancelBtn];
     
+    UIButton *resetBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    resetBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/2-60, CGRectGetHeight(self.view.frame) - 40, 60, 40);
+    resetBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
+    [resetBtn setTitle:NSLocalizedStringFromTable(@"Reset", @"PhotoTweaks", nil) forState:UIControlStateNormal];
+    [resetBtn setTitleColor:cancelTitleColor forState:UIControlStateNormal];
+    [resetBtn setTitleColor:cancelHighlightTitleColor forState:UIControlStateHighlighted];
+    resetBtn.titleLabel.font = [UIFont systemFontOfSize:17];
+    [resetBtn addTarget:self action:@selector(resetBtnTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:resetBtn];
+    
+    UIButton *rotateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    rotateBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/2, CGRectGetHeight(self.view.frame) - 40, 60, 40);
+    rotateBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
+    [rotateBtn setTitle:NSLocalizedStringFromTable(@"Rotate", @"PhotoTweaks", nil) forState:UIControlStateNormal];
+    [rotateBtn setTitleColor:cancelTitleColor forState:UIControlStateNormal];
+    [rotateBtn setTitleColor:cancelHighlightTitleColor forState:UIControlStateHighlighted];
+    rotateBtn.titleLabel.font = [UIFont systemFontOfSize:17];
+    [rotateBtn addTarget:self action:@selector(rotateBtnTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:rotateBtn];
+    
     UIButton *cropBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     cropBtn.titleLabel.textAlignment = NSTextAlignmentRight;
     cropBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame) - 60, CGRectGetHeight(self.view.frame) - 40, 60, 40);
@@ -79,12 +99,50 @@
     cropBtn.titleLabel.font = [UIFont systemFontOfSize:17];
     [cropBtn addTarget:self action:@selector(saveBtnTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:cropBtn];
+    [self setupWheel];
+}
+
+- (void) wheelDidChangeValue:(CGFloat)newValue{
+    NSLog(@"wheelDidChangeValue%f",newValue);
+    [self.photoView setAngle:-newValue];
+}
+
+-(void) wheelUp{
+    [self.photoView dismissGridLines];
+}
+
+-(void) setupWheel{
+    self.wheel = [[SMRotatoryWheel alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.view.frame)/2.-CGRectGetWidth(self.view.frame)/2+CGRectGetWidth(self.view.frame)*0.15, CGRectGetWidth(self.view.frame), CGRectGetWidth(self.view.frame))
+                                                        andDelegate:self
+                                                       withSections:180];
+    //wheel.backgroundColor=[UIColor greenColor];
+    self.wheel.userInteractionEnabled=YES;
+    // 3 - Add wheel to view
+    [self.view addSubview:self.wheel];
 }
 
 - (void)cancelBtnTapped
 {
     [self.delegate photoTweaksControllerDidCancel:self];
 }
+
+- (void)resetBtnTapped
+{
+    [self.photoView reset];
+    [self.photoView dismissGridLines];
+    [self.wheel resetRotation];
+}
+
+- (void)rotateBtnTapped
+{
+    [self.photoView rotate];
+    [self.photoView dismissGridLines];
+    [self.wheel resetRotation];
+    
+    
+}
+
+
 
 - (void)saveBtnTapped
 {

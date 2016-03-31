@@ -7,13 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SMRotatoryWheel.h"
 
 @protocol PhotoTweaksViewControllerDelegate;
 
 /**
  The photo tweaks controller.
  */
-@interface PhotoTweaksViewController : UIViewController
+@interface PhotoTweaksViewController : UIViewController<SMRotatoryProtocol>
+
+@property (nonatomic, strong) SMRotatoryWheel* wheel;
 
 @property BOOL singleMode;
 

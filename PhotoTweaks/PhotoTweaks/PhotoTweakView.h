@@ -30,11 +30,14 @@
 @interface PhotoTweakView : UIView
 
 @property (assign, nonatomic) CGFloat angle;
+@property (assign, nonatomic) CGFloat baseAngle;
+- (void) dismissGridLines;
+- (void) reset;
+- (void) rotate;
 @property (strong, nonatomic) PhotoContentView *photoContentView;
 @property (assign, nonatomic) CGPoint photoContentOffset;
 @property (strong, nonatomic) CropView *cropView;
 
-@property (nonatomic, strong, readonly) UISlider *slider;
 @property (nonatomic, strong, readonly) UIButton *resetBtn;
 
 @property BOOL singleMode;

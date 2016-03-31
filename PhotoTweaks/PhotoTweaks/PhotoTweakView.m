@@ -10,6 +10,8 @@
 #import "UIColor+Tweak.h"
 #import <math.h>
 
+
+
 static const int kCropLines = 2;
 static const int kGridLines = 9;
 
@@ -312,7 +314,7 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
     }
 }
 
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesCancelled2:(NSSet *)touches withEvent:(UIEvent *)event
 {
     
 }
@@ -365,11 +367,15 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
                                     (self.frame.size.height / (lines.count + 1)) * (idx + 1),
                                     self.frame.size.width,
                                     1 / [UIScreen mainScreen].scale);
+            //NSLog(@"frame horizontal x:%f y:%f w:%f h:%f",line.frame.origin.x,line.frame.origin.y, line.frame.size.width, line.frame.size.height);
         } else {
             line.frame = CGRectMake((self.frame.size.width / (lines.count + 1)) * (idx + 1),
                                     0,
-                                    1 / [UIScreen mainScreen].scale,
+                                    1 / [UIScreen mainScreen].scale*1.1,
                                     self.frame.size.height);
+
+            //NSLog(@"frame vertical x:%f y:%f w:%f h:%f",line.frame.origin.x,line.frame.origin.y, line.frame.size.width, line.frame.size.height);
+
         }
     }];
 }
@@ -383,6 +389,7 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
         self.cropLinesDismissed = YES;
     }];
 }
+
 
 - (void)dismissGridLines
 {
@@ -456,13 +463,16 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
 
 @implementation PhotoTweakView
 
+- (void) reset{
+    [self resetBtnTapped:self];
+}
+
 - (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image  singleMode:(BOOL) singleMode
 {
     self.singleMode=singleMode;
     if (self = [super init]) {
         
         self.frame = frame;
-        
         _image = image;
         
         // scale the image
@@ -535,24 +545,16 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
         [self addSubview:_rightMask];
         [self updateMasks:NO];
         
-        _slider = [[UISlider alloc] initWithFrame:CGRectMake(0, 0, 240, 20)];
-        _slider.center = CGPointMake(CGRectGetWidth(self.bounds) / 2, CGRectGetHeight(self.bounds) - 135);
-        _slider.minimumValue = 0.0f;
-        _slider.maximumValue = 1.0f;
-        [_slider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
-        [_slider addTarget:self action:@selector(sliderTouchEnded:) forControlEvents:UIControlEventTouchUpInside];
-        _slider.value = 0.5;
-        [self addSubview:_slider];
         
-        _resetBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        _resetBtn.frame = CGRectMake(0, 0, 60, 20);
-        _resetBtn.center = CGPointMake(CGRectGetWidth(self.bounds) / 2, CGRectGetHeight(self.bounds) - 95);
-        _resetBtn.titleLabel.font = [UIFont systemFontOfSize:14];
-        [_resetBtn setTitleColor:[UIColor resetButtonColor] forState:UIControlStateNormal];
-        [_resetBtn setTitleColor:[UIColor resetButtonHighlightedColor] forState:UIControlStateHighlighted];
-        [_resetBtn setTitle:NSLocalizedStringFromTable(@"RESET", @"PhotoTweaks", nil) forState:UIControlStateNormal];
-        [_resetBtn addTarget:self action:@selector(resetBtnTapped:) forControlEvents:UIControlEventTouchUpInside];
-        [self addSubview:_resetBtn];
+//        _resetBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//        _resetBtn.frame = CGRectMake(0, 0, 60, 20);
+//        _resetBtn.center = CGPointMake(CGRectGetWidth(self.bounds) / 2, CGRectGetHeight(self.bounds) - 95);
+//        _resetBtn.titleLabel.font = [UIFont systemFontOfSize:14];
+//        [_resetBtn setTitleColor:[UIColor resetButtonColor] forState:UIControlStateNormal];
+//        [_resetBtn setTitleColor:[UIColor resetButtonHighlightedColor] forState:UIControlStateHighlighted];
+//        [_resetBtn setTitle:NSLocalizedStringFromTable(@"RESET", @"PhotoTweaks", nil) forState:UIControlStateNormal];
+//        [_resetBtn addTarget:self action:@selector(resetBtnTapped:) forControlEvents:UIControlEventTouchUpInside];
+//        [self addSubview:_resetBtn];
         
         _originalPoint = [self convertPoint:self.scrollView.center toView:self];
         //[self setBackgroundColor:[UIColor greenColor]];
@@ -564,9 +566,10 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    if (CGRectContainsPoint(self.slider.frame, point)) {
-        return self.slider;
-    } else if (CGRectContainsPoint(self.resetBtn.frame, point)) {
+    //if (CGRectContainsPoint(self.slider.frame, point)) {
+    //    return self.slider;
+    //} else
+        if (CGRectContainsPoint(self.resetBtn.frame, point)) {
         return self.resetBtn;
     } else if (CGRectContainsPoint(CGRectInset(self.cropView.frame, -kCropViewHotArea, -kCropViewHotArea), point) && !CGRectContainsPoint(CGRectInset(self.cropView.frame, kCropViewHotArea, kCropViewHotArea), point)) {
         return self.cropView;
@@ -683,6 +686,18 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
     }
 }
 
+- (void)setAngle:(CGFloat)value{
+    _angle=value+self.baseAngle;
+    NSLog(@"setAngle:%f",_angle);
+    [self sliderValueChanged:self];
+}
+
+
+- (void) rotate{
+    self.baseAngle+=M_PI/2;
+    self.angle=0;
+}
+
 - (void)sliderValueChanged:(id)sender
 {
     // update masks
@@ -692,12 +707,14 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
     [self.cropView updateGridLines:NO];
     
     // rotate scroll view
-    self.angle = self.slider.value - 0.5;
-    self.scrollView.transform = CGAffineTransformMakeRotation(self.angle);
+    //self.angle = self.slider.value - 0.5;
+    NSLog(@"sliderValueChanged%f",_angle);
+
+    self.scrollView.transform = CGAffineTransformMakeRotation(_angle);
     
     // position scroll view
-    CGFloat width = cos(fabs(self.angle)) * self.cropView.frame.size.width + sin(fabs(self.angle)) * self.cropView.frame.size.height;
-    CGFloat height = sin(fabs(self.angle)) * self.cropView.frame.size.width + cos(fabs(self.angle)) * self.cropView.frame.size.height;
+    CGFloat width = cos(fabs(self.angle-self.baseAngle)) * self.cropView.frame.size.width + sin(fabs(self.angle-self.baseAngle)) * self.cropView.frame.size.height;
+    CGFloat height = sin(fabs(self.angle-self.baseAngle)) * self.cropView.frame.size.width + cos(fabs(self.angle-self.baseAngle)) * self.cropView.frame.size.height;
     CGPoint center = self.scrollView.center;
     
     CGPoint contentOffset = self.scrollView.contentOffset;
@@ -724,9 +741,14 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
     [self.cropView dismissGridLines];
 }
 
+- (void) dismissGridLines{
+    [self.cropView dismissGridLines];
+}
+
 - (void)resetBtnTapped:(id)sender
 {
     [UIView animateWithDuration:0.25 animations:^{
+        self.baseAngle=0;
         self.angle = 0;
         
         self.scrollView.transform = CGAffineTransformIdentity;
@@ -739,9 +761,7 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
         self.cropView.center = self.scrollView.center;
         [self updateMasks:NO];
         
-        [self.slider setValue:0.5 animated:YES];
-        [self sliderValueChanged:self];
-        [self sliderTouchEnded:self];
+
     }];
 }
 
