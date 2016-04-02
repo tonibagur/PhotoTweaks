@@ -56,7 +56,7 @@
     buttonBar.alpha=0.85;
     [self.view addSubview:buttonBar];
     UIButton *cancelBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    cancelBtn.frame = CGRectMake(8+(CGRectGetWidth(self.view.frame)-8)/7.*0, CGRectGetHeight(self.view.frame) - 30, 20, 20);
+    cancelBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*0.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
     cancelBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
     //[cancelBtn setTitle:NSLocalizedStringFromTable(@"Cancel", @"PhotoTweaks", nil) forState:UIControlStateNormal];
     [cancelBtn setImage:[UIImage imageNamed:@"editCancelBtn"] forState:UIControlStateNormal];
@@ -71,7 +71,7 @@
     [self.view addSubview:cancelBtn];
     
     UIButton *resetBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    resetBtn.frame = CGRectMake(8+(CGRectGetWidth(self.view.frame)-8)/7.*1, CGRectGetHeight(self.view.frame) - 30, 20, 20);
+    resetBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*1.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
     resetBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
     [resetBtn setTitle:NSLocalizedStringFromTable(@"Reset", @"PhotoTweaks", nil) forState:UIControlStateNormal];
     [resetBtn setImage:[UIImage imageNamed:@"editResetBtn"] forState:UIControlStateNormal];
@@ -82,7 +82,7 @@
     [self.view addSubview:resetBtn];
     
     UIButton *rotateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    rotateBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7.*2, CGRectGetHeight(self.view.frame) - 30, 20, 20);
+    rotateBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*2.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
     rotateBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
     //[rotateBtn setTitle:NSLocalizedStringFromTable(@"Rotate", @"PhotoTweaks", nil) forState:UIControlStateNormal];
     [rotateBtn setImage:[UIImage imageNamed:@"editRotateBtn"] forState:UIControlStateNormal];
@@ -93,7 +93,7 @@
     [self.view addSubview:rotateBtn];
 
     UIButton *lightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    lightBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7.*3, CGRectGetHeight(self.view.frame) - 30, 20, 20);
+    lightBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*3.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
     lightBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
     //[rotateBtn setTitle:NSLocalizedStringFromTable(@"Rotate", @"PhotoTweaks", nil) forState:UIControlStateNormal];
     [lightBtn setImage:[UIImage imageNamed:@"editLightBtn"] forState:UIControlStateNormal];
@@ -104,7 +104,7 @@
     [self.view addSubview:lightBtn];
     
     UIButton *colorBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    colorBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7.*4, CGRectGetHeight(self.view.frame) - 30, 20, 20);
+    colorBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*4.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
     colorBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
     //[rotateBtn setTitle:NSLocalizedStringFromTable(@"Rotate", @"PhotoTweaks", nil) forState:UIControlStateNormal];
     [colorBtn setImage:[UIImage imageNamed:@"editColorBtn"] forState:UIControlStateNormal];
@@ -115,7 +115,7 @@
     [self.view addSubview:colorBtn];
 
     UIButton *bnBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    bnBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7.*5, CGRectGetHeight(self.view.frame) - 30, 20, 20);
+    bnBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*5.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
     bnBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
     //[rotateBtn setTitle:NSLocalizedStringFromTable(@"Rotate", @"PhotoTweaks", nil) forState:UIControlStateNormal];
     [bnBtn setImage:[UIImage imageNamed:@"editBnBtn"] forState:UIControlStateNormal];
@@ -127,7 +127,7 @@
     
     UIButton *cropBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     cropBtn.titleLabel.textAlignment = NSTextAlignmentRight;
-    cropBtn.frame = CGRectMake(8+(CGRectGetWidth(self.view.frame)-8)/7.*6, CGRectGetHeight(self.view.frame) - 30, 20, 20);
+    cropBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*6.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
     //[cropBtn setTitle:NSLocalizedStringFromTable(@"Done", @"PhotoTweaks", nil) forState:UIControlStateNormal];
     [cropBtn setImage:[UIImage imageNamed:@"editDoneBtn"] forState:UIControlStateNormal];
     UIColor *saveButtonTitleColor = !self.saveButtonTitleColor ?

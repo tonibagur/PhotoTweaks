@@ -20,6 +20,11 @@
 
 @property BOOL singleMode;
 
+@property UISlider* sliderLight;
+@property UISlider* sliderColor;
+@property UISlider* sliderBn;
+
+
 /**
  Image to process.
  */
