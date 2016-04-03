@@ -25,22 +25,34 @@
     self.singleMode=mode;
     if (self = [super init]) {
         _sourceImage = image;
-        _image = [self transformImage:self.sourceImage withBnValue:0.5];
+        [self setupFilters];
+        _image = [self transformImage:self.sourceImage withBnValue:0.5 withBnIntensity:0.];
         _autoSaveToLibray = YES;
     }
     return self;
 }
 
-- (UIImage*) transformImage:(UIImage*) sourceImage withBnValue:(CGFloat) bnValue{
-    //return sourceImage;
-    //GPUImageGrayscaleFilter* filter = [[GPUImageMonochromeFilter alloc] init];
-    GPUImageMonochromeFilter* filter = [[GPUImageMonochromeFilter alloc] init];
+-(void) setupFilters{
+    self.gpuPicture=[[GPUImagePicture alloc] initWithImage:_sourceImage];
+    self.monoFilter=[[GPUImageMonochromeFilter alloc] init];
+    [self.gpuPicture addTarget:self.monoFilter];
+    
+
+    
+
+}
+
+- (UIImage*) transformImage:(UIImage*) sourceImage withBnValue:(CGFloat) bnValue withBnIntensity:(CGFloat) bnIntensity{
     GPUVector4 color;
     color.one=bnValue;color.two=bnValue;color.three=bnValue;color.four=1;
-    filter.color=color;
-    filter.intensity=1.0;
-    UIImage *imageFiltered = [filter imageByFilteringImage:self.sourceImage];
-    return imageFiltered;
+    self.monoFilter.color=color;
+    self.monoFilter.intensity=bnIntensity;
+    
+    [self.monoFilter useNextFrameForImageCapture];
+    [self.gpuPicture processImage];
+    UIImage* processedImg = [self.monoFilter imageFromCurrentFramebuffer];
+    processedImg = [UIImage imageWithCGImage:[processedImg CGImage] scale:1.0 orientation:self.sourceImage.imageOrientation];
+    return processedImg;
 
 }
 
@@ -170,7 +182,7 @@
 
 - (void) bnSliderChanged:(id) sender{
     NSLog(@"BN slider changed:%f",self.bnSlider.value);
-    self.image=[self transformImage:self.sourceImage withBnValue:self.bnSlider.value];
+    self.image=[self transformImage:self.sourceImage withBnValue:self.bnSlider.value withBnIntensity:1.];
 }
 
 - (void) wheelDidChangeValue:(CGFloat)newValue{

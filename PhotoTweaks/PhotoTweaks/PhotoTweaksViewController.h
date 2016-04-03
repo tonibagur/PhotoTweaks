@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "SMRotatoryWheel.h"
+#import "GPUImage.h"
 
 @protocol PhotoTweaksViewControllerDelegate;
 
@@ -33,6 +34,10 @@
 @property UISlider* lightSlider;
 @property UISlider* colorSlider;
 @property UISlider* bnSlider;
+
+@property GPUImageMonochromeFilter* monoFilter;
+@property GPUImagePicture* gpuPicture;
+
 
 
 
