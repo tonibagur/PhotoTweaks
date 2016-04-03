@@ -366,7 +366,7 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
             line.frame = CGRectMake(0,
                                     (self.frame.size.height / (lines.count + 1)) * (idx + 1),
                                     self.frame.size.width,
-                                    1 / [UIScreen mainScreen].scale);
+                                    1 / [UIScreen mainScreen].scale*1.1);
             //NSLog(@"frame horizontal x:%f y:%f w:%f h:%f",line.frame.origin.x,line.frame.origin.y, line.frame.size.width, line.frame.size.height);
         } else {
             line.frame = CGRectMake((self.frame.size.width / (lines.count + 1)) * (idx + 1),

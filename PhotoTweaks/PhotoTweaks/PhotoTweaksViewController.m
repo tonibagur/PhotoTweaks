@@ -10,6 +10,7 @@
 #import "PhotoTweakView.h"
 #import "UIColor+Tweak.h"
 #import <AssetsLibrary/AssetsLibrary.h>
+#import "GPUImage.h"
 
 @interface PhotoTweaksViewController ()
 
@@ -23,11 +24,32 @@
 {
     self.singleMode=mode;
     if (self = [super init]) {
-        _image = image;
+        _sourceImage = image;
+        _image = [self transformImage:self.sourceImage withBnValue:0.5];
         _autoSaveToLibray = YES;
     }
     return self;
 }
+
+- (UIImage*) transformImage:(UIImage*) sourceImage withBnValue:(CGFloat) bnValue{
+    //return sourceImage;
+    //GPUImageGrayscaleFilter* filter = [[GPUImageMonochromeFilter alloc] init];
+    GPUImageMonochromeFilter* filter = [[GPUImageMonochromeFilter alloc] init];
+    GPUVector4 color;
+    color.one=bnValue;color.two=bnValue;color.three=bnValue;color.four=1;
+    filter.color=color;
+    filter.intensity=1.0;
+    UIImage *imageFiltered = [filter imageByFilteringImage:self.sourceImage];
+    return imageFiltered;
+
+}
+
+-(void) setImage:(UIImage *)image{
+    _image=image;
+    self.photoView.photoContentView.image=image;
+    self.photoView.photoContentView.imageView.image=image;
+}
+
 
 - (void)viewDidLoad
 {
@@ -83,7 +105,7 @@
     self.photoView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view addSubview:self.photoView];
     
-    UIView* buttonBar=[[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.view.frame)*0.93, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame)*0.07 )];
+    UIView* buttonBar=[[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.view.frame)-40, CGRectGetWidth(self.view.frame), 40 )];
     buttonBar.backgroundColor=[UIColor blackColor];
     buttonBar.alpha=0.85;
     [self.view addSubview:buttonBar];
@@ -133,7 +155,22 @@
                 withSelector:@selector(saveBtnTapped)
                        atPos:6];
     
+    self.bnSlider=[[UISlider alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.view.frame)-80, CGRectGetWidth(self.view.frame), 40 )];
+    [self.bnSlider addTarget:self action:@selector(bnSliderChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.bnSlider setBackgroundColor:[UIColor clearColor]];
+    self.bnSlider.minimumValue = 0.0;
+    self.bnSlider.maximumValue = 1.0;
+    self.bnSlider.continuous = YES;
+    self.bnSlider.value = 0.5;
+    self.bnSlider.hidden=YES;
+    [self.view addSubview:self.bnSlider];
+    
     [self setupWheel];
+}
+
+- (void) bnSliderChanged:(id) sender{
+    NSLog(@"BN slider changed:%f",self.bnSlider.value);
+    self.image=[self transformImage:self.sourceImage withBnValue:self.bnSlider.value];
 }
 
 - (void) wheelDidChangeValue:(CGFloat)newValue{
@@ -188,9 +225,11 @@
     if ([self.bnBtn isSelected]){
         [self.bnBtn setSelected:NO];
         self.bnBtn.backgroundColor=[UIColor blackColor];
+        self.bnSlider.hidden=YES;
     } else{
         [self.bnBtn setSelected:YES];
         self.bnBtn.backgroundColor=[UIColor whiteColor];
+        self.bnSlider.hidden=NO;
     }
 }
 

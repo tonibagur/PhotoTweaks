@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name             = 'PhotoTweaks'
-  spec.version          = '2.0.0'
+  spec.version          = '2.0.1'
   spec.license          = 'MIT' 
   spec.homepage         = 'https://github.com/itouch2/PhotoTweaks'
   spec.authors          = {'Tu You' => 'yoututouch@gmail.com'}
@@ -11,4 +11,5 @@ Pod::Spec.new do |spec|
   spec.requires_arc     = true
   spec.platform         = :ios, '7.0'
   spec.screenshot       = 'https://cloud.githubusercontent.com/assets/4316898/6525485/ce2d65ae-c440-11e4-8a73-c461a3f31b5f.png'
+  spec.dependency 'GPUImage', '~> 0.1'
 end

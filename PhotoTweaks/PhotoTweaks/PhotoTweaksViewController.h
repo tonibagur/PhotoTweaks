@@ -30,6 +30,11 @@
 @property UIButton* resetBtn;
 @property UIButton* rotateBtn;
 @property UIButton* cropBtn;
+@property UISlider* lightSlider;
+@property UISlider* colorSlider;
+@property UISlider* bnSlider;
+
+
 
 
 
@@ -38,9 +43,15 @@
 
 
 /**
- Image to process.
+ Image to process. Post GPUImageFilter
+ */
+@property (nonatomic, strong, readonly) UIImage *sourceImage;
+
+/**
+ Source image to process. Pre GPUImageFilter
  */
 @property (nonatomic, strong, readonly) UIImage *image;
+
 
 /**
  Flag indicating whether the image cropped will be saved to photo library automatically. Defaults to YES.
