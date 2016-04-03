@@ -23,6 +23,18 @@
 @property UISlider* sliderLight;
 @property UISlider* sliderColor;
 @property UISlider* sliderBn;
+@property UIButton* lightBtn;
+@property UIButton* colorBtn;
+@property UIButton* bnBtn;
+@property UIButton* cancelBtn;
+@property UIButton* resetBtn;
+@property UIButton* rotateBtn;
+@property UIButton* cropBtn;
+
+
+
+
+
 
 
 /**

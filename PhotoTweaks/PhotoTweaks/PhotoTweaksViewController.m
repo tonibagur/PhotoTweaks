@@ -45,6 +45,38 @@
     [self setupSubviews];
 }
 
+-(CGRect) getRectForButtonAtPos:(NSInteger) pos{
+    return CGRectMake(CGRectGetWidth(self.view.frame)/7*(pos+0.5)-15, CGRectGetHeight(self.view.frame) - 35, 30, 30);
+}
+
+-(void) configureNormalBtn:(UIButton*) btn
+                 withImage:(NSString*) image
+              withSelector:(SEL) selector
+                     atPos:(NSInteger) pos
+{
+    
+    btn.frame = [self getRectForButtonAtPos:pos];
+    btn.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+    btn.layer.cornerRadius=5;
+    btn.titleLabel.textAlignment = NSTextAlignmentLeft;
+    [btn setImage:[UIImage imageNamed:image] forState:UIControlStateNormal];
+    [btn addTarget:self action:selector forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn];
+}
+
+-(void) configureSwitchBtn:(UIButton*) btn
+        withImage:(NSString*) image
+        withActiveImage:(NSString*) activeImage
+        withSelector:(SEL) selector
+        atPos:(NSInteger) pos
+{
+    
+    [self configureNormalBtn:btn withImage:image withSelector:selector atPos:pos];
+    [btn setImage:[UIImage imageNamed:activeImage] forState:UIControlStateSelected];
+
+    [self.view addSubview:btn];
+}
+
 - (void)setupSubviews
 {
     self.photoView = [[PhotoTweakView alloc] initWithFrame:self.view.bounds image:self.image singleMode:self.singleMode];
@@ -55,91 +87,52 @@
     buttonBar.backgroundColor=[UIColor blackColor];
     buttonBar.alpha=0.85;
     [self.view addSubview:buttonBar];
-    UIButton *cancelBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    cancelBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*0.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
-    cancelBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
-    //[cancelBtn setTitle:NSLocalizedStringFromTable(@"Cancel", @"PhotoTweaks", nil) forState:UIControlStateNormal];
-    [cancelBtn setImage:[UIImage imageNamed:@"editCancelBtn"] forState:UIControlStateNormal];
-    UIColor *cancelTitleColor = !self.cancelButtonTitleColor ?
-    [UIColor cancelButtonColor] : self.cancelButtonTitleColor;
-    [cancelBtn setTitleColor:cancelTitleColor forState:UIControlStateNormal];
-    UIColor *cancelHighlightTitleColor = !self.cancelButtonHighlightTitleColor ?
-    [UIColor cancelButtonHighlightedColor] : self.cancelButtonHighlightTitleColor;
-    [cancelBtn setTitleColor:cancelHighlightTitleColor forState:UIControlStateHighlighted];
-    cancelBtn.titleLabel.font = [UIFont systemFontOfSize:17];
-    [cancelBtn addTarget:self action:@selector(cancelBtnTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:cancelBtn];
     
-    UIButton *resetBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    resetBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*1.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
-    resetBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
-    [resetBtn setTitle:NSLocalizedStringFromTable(@"Reset", @"PhotoTweaks", nil) forState:UIControlStateNormal];
-    [resetBtn setImage:[UIImage imageNamed:@"editResetBtn"] forState:UIControlStateNormal];
-    [resetBtn setTitleColor:cancelTitleColor forState:UIControlStateNormal];
-    [resetBtn setTitleColor:cancelHighlightTitleColor forState:UIControlStateHighlighted];
-    resetBtn.titleLabel.font = [UIFont systemFontOfSize:17];
-    [resetBtn addTarget:self action:@selector(resetBtnTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:resetBtn];
+    self.cancelBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self configureNormalBtn:self.cancelBtn
+                   withImage:@"editCancelBtn"
+                withSelector:@selector(cancelBtnTapped)
+                       atPos:0];
     
-    UIButton *rotateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    rotateBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*2.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
-    rotateBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
-    //[rotateBtn setTitle:NSLocalizedStringFromTable(@"Rotate", @"PhotoTweaks", nil) forState:UIControlStateNormal];
-    [rotateBtn setImage:[UIImage imageNamed:@"editRotateBtn"] forState:UIControlStateNormal];
-    [rotateBtn setTitleColor:cancelTitleColor forState:UIControlStateNormal];
-    [rotateBtn setTitleColor:cancelHighlightTitleColor forState:UIControlStateHighlighted];
-    rotateBtn.titleLabel.font = [UIFont systemFontOfSize:17];
-    [rotateBtn addTarget:self action:@selector(rotateBtnTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:rotateBtn];
+    self.resetBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self configureNormalBtn:self.resetBtn
+                   withImage:@"editResetBtn"
+                withSelector:@selector(resetBtnTapped)
+                       atPos:1];
+    
+    self.rotateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self configureNormalBtn:self.rotateBtn
+                   withImage:@"editRotateBtn"
+                withSelector:@selector(rotateBtnTapped)
+                       atPos:2];
 
-    UIButton *lightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    lightBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*3.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
-    lightBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
-    //[rotateBtn setTitle:NSLocalizedStringFromTable(@"Rotate", @"PhotoTweaks", nil) forState:UIControlStateNormal];
-    [lightBtn setImage:[UIImage imageNamed:@"editLightBtn"] forState:UIControlStateNormal];
-    [lightBtn setTitleColor:cancelTitleColor forState:UIControlStateNormal];
-    [lightBtn setTitleColor:cancelHighlightTitleColor forState:UIControlStateHighlighted];
-    lightBtn.titleLabel.font = [UIFont systemFontOfSize:17];
-    [lightBtn addTarget:self action:@selector(rotateBtnTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:lightBtn];
+    self.lightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self configureSwitchBtn:self.lightBtn
+                   withImage:@"editLightBtn"
+             withActiveImage:@"editLightBtnActive"
+                withSelector:@selector(lightBtnTapped)
+                       atPos:3];
     
-    UIButton *colorBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    colorBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*4.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
-    colorBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
-    //[rotateBtn setTitle:NSLocalizedStringFromTable(@"Rotate", @"PhotoTweaks", nil) forState:UIControlStateNormal];
-    [colorBtn setImage:[UIImage imageNamed:@"editColorBtn"] forState:UIControlStateNormal];
-    [colorBtn setTitleColor:cancelTitleColor forState:UIControlStateNormal];
-    [colorBtn setTitleColor:cancelHighlightTitleColor forState:UIControlStateHighlighted];
-    colorBtn.titleLabel.font = [UIFont systemFontOfSize:17];
-    [colorBtn addTarget:self action:@selector(rotateBtnTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:colorBtn];
-
-    UIButton *bnBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    bnBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*5.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
-    bnBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
-    //[rotateBtn setTitle:NSLocalizedStringFromTable(@"Rotate", @"PhotoTweaks", nil) forState:UIControlStateNormal];
-    [bnBtn setImage:[UIImage imageNamed:@"editBnBtn"] forState:UIControlStateNormal];
-    [bnBtn setTitleColor:cancelTitleColor forState:UIControlStateNormal];
-    [bnBtn setTitleColor:cancelHighlightTitleColor forState:UIControlStateHighlighted];
-    bnBtn.titleLabel.font = [UIFont systemFontOfSize:17];
-    [bnBtn addTarget:self action:@selector(rotateBtnTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:bnBtn];
+    self.colorBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self configureSwitchBtn:self.colorBtn
+                   withImage:@"editColorBtn"
+             withActiveImage:@"editColorBtn"
+                withSelector:@selector(colorBtnTapped)
+                       atPos:4];
     
-    UIButton *cropBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    cropBtn.titleLabel.textAlignment = NSTextAlignmentRight;
-    cropBtn.frame = CGRectMake(CGRectGetWidth(self.view.frame)/7*6.5-10, CGRectGetHeight(self.view.frame) - 30, 20, 20);
-    //[cropBtn setTitle:NSLocalizedStringFromTable(@"Done", @"PhotoTweaks", nil) forState:UIControlStateNormal];
-    [cropBtn setImage:[UIImage imageNamed:@"editDoneBtn"] forState:UIControlStateNormal];
-    UIColor *saveButtonTitleColor = !self.saveButtonTitleColor ?
-    [UIColor saveButtonColor] : self.saveButtonTitleColor;
-    [cropBtn setTitleColor:saveButtonTitleColor forState:UIControlStateNormal];
+    self.bnBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self configureSwitchBtn:self.bnBtn
+                   withImage:@"editBnBtn"
+             withActiveImage:@"editBnBtnActive"
+                withSelector:@selector(bnBtnTapped)
+                       atPos:5];
     
-    UIColor *saveButtonHighlightTitleColor = !self.saveButtonHighlightTitleColor ?
-    [UIColor saveButtonHighlightedColor] : self.saveButtonHighlightTitleColor;
-    [cropBtn setTitleColor:saveButtonHighlightTitleColor forState:UIControlStateHighlighted];
-    cropBtn.titleLabel.font = [UIFont systemFontOfSize:17];
-    [cropBtn addTarget:self action:@selector(saveBtnTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:cropBtn];
+    self.cropBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self configureNormalBtn:self.cropBtn
+                   withImage:@"editDoneBtn"
+                withSelector:@selector(saveBtnTapped)
+                       atPos:6];
+    
     [self setupWheel];
 }
 
@@ -188,10 +181,40 @@
     [self.photoView rotate];
     [self.photoView dismissGridLines];
     [self.wheel resetRotation];
-    
-    
 }
 
+- (void)bnBtnTapped
+{
+    if ([self.bnBtn isSelected]){
+        [self.bnBtn setSelected:NO];
+        self.bnBtn.backgroundColor=[UIColor blackColor];
+    } else{
+        [self.bnBtn setSelected:YES];
+        self.bnBtn.backgroundColor=[UIColor whiteColor];
+    }
+}
+
+- (void)colorBtnTapped
+{
+    if ([self.colorBtn isSelected]){
+        [self.colorBtn setSelected:NO];
+        self.colorBtn.backgroundColor=[UIColor blackColor];
+    } else{
+        [self.colorBtn setSelected:YES];
+        self.colorBtn.backgroundColor=[UIColor whiteColor];
+    }
+}
+
+- (void)lightBtnTapped
+{
+    if ([self.lightBtn isSelected]){
+        [self.lightBtn setSelected:NO];
+        self.lightBtn.backgroundColor=[UIColor blackColor];
+    } else{
+        [self.lightBtn setSelected:YES];
+        self.lightBtn.backgroundColor=[UIColor whiteColor];
+    }
+}
 
 
 - (void)saveBtnTapped
