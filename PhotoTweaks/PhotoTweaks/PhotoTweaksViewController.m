@@ -26,7 +26,7 @@
     if (self = [super init]) {
         _sourceImage = image;
         [self setupFilters];
-        _image = [self transformImage:self.sourceImage withBnValue:0.5 withBnIntensity:0.];
+        _image = [self transformImage:self.sourceImage withBnValue:0.5 withBnIntensity:0. withLight:0. withColor:0.];
         _autoSaveToLibray = YES;
     }
     return self;
@@ -34,19 +34,31 @@
 
 -(void) setupFilters{
     self.gpuPicture=[[GPUImagePicture alloc] initWithImage:_sourceImage];
+    self.lightFilter=[[GPUImageBrightnessFilter alloc] init];
     self.monoFilter=[[GPUImageMonochromeFilter alloc] init];
-    [self.gpuPicture addTarget:self.monoFilter];
-    
-
-    
+    self.contrastFilter=[[GPUImageContrastFilter alloc] init];
+    self.saturationFilter=[[GPUImageSaturationFilter alloc] init];
+    [self.gpuPicture addTarget:self.lightFilter];
+    [self.lightFilter addTarget:self.saturationFilter];
+    [self.saturationFilter addTarget:self.contrastFilter];
+    [self.contrastFilter addTarget:self.monoFilter];
 
 }
 
-- (UIImage*) transformImage:(UIImage*) sourceImage withBnValue:(CGFloat) bnValue withBnIntensity:(CGFloat) bnIntensity{
+- (UIImage*) transformImage:(UIImage*) sourceImage withBnValue:(CGFloat) bnValue withBnIntensity:(CGFloat) bnIntensity withLight:(CGFloat) light withColor:(CGFloat) colorVal{
     GPUVector4 color;
     color.one=bnValue;color.two=bnValue;color.three=bnValue;color.four=1;
+
+    if (colorVal >=0){
+        self.saturationFilter.saturation=1+colorVal;
+        self.contrastFilter.contrast=1+3*colorVal*0.5;
+    } else{
+        self.contrastFilter.contrast=1.;
+        self.saturationFilter.saturation=1+colorVal;
+    }
     self.monoFilter.color=color;
     self.monoFilter.intensity=bnIntensity;
+    self.lightFilter.brightness=light;
     
     [self.monoFilter useNextFrameForImageCapture];
     [self.gpuPicture processImage];
@@ -63,7 +75,7 @@
     }else{
         bnIntensity=0.;
     }
-    self.image=[self transformImage:self.sourceImage withBnValue:self.bnSlider.value withBnIntensity:bnIntensity];
+    self.image=[self transformImage:self.sourceImage withBnValue:self.bnSlider.value withBnIntensity:bnIntensity withLight:self.lightSlider.value withColor:self.colorSlider.value];
 }
 
 -(void) setImage:(UIImage *)image{
@@ -190,20 +202,20 @@
     self.colorSlider=[[UISlider alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.view.frame)-80, CGRectGetWidth(self.view.frame), 40 )];
     [self.colorSlider addTarget:self action:@selector(colorSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [self.colorSlider setBackgroundColor:[UIColor clearColor]];
-    self.colorSlider.minimumValue = 0.0;
+    self.colorSlider.minimumValue = -1.0;
     self.colorSlider.maximumValue = 1.0;
     self.colorSlider.continuous = YES;
-    self.colorSlider.value = 0.5;
+    self.colorSlider.value = 0.;
     self.colorSlider.hidden=YES;
     [self.view addSubview:self.colorSlider];
 
     self.lightSlider=[[UISlider alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.view.frame)-80, CGRectGetWidth(self.view.frame), 40 )];
     [self.lightSlider addTarget:self action:@selector(lightSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [self.lightSlider setBackgroundColor:[UIColor clearColor]];
-    self.lightSlider.minimumValue = 0.0;
+    self.lightSlider.minimumValue = -1.0;
     self.lightSlider.maximumValue = 1.0;
     self.lightSlider.continuous = YES;
-    self.lightSlider.value = 0.5;
+    self.lightSlider.value = 0.;
     self.lightSlider.hidden=YES;
     [self.view addSubview:self.lightSlider];
     
@@ -260,6 +272,13 @@
 
 - (void)resetBtnTapped
 {
+    
+    self.bnSlider.value=0.5;
+    self.lightSlider.value=0.;
+    [self deselectButton:self.bnBtn];
+    [self deselectButton:self.colorBtn];
+    [self deselectButton:self.lightBtn];
+    [self updateImage];
     [self.photoView reset];
     [self.photoView dismissGridLines];
     [self.wheel resetRotation];

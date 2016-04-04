@@ -36,6 +36,9 @@
 @property UISlider* bnSlider;
 
 @property GPUImageMonochromeFilter* monoFilter;
+@property GPUImageBrightnessFilter* lightFilter;
+@property GPUImageContrastFilter* contrastFilter;
+@property GPUImageSaturationFilter* saturationFilter;
 @property GPUImagePicture* gpuPicture;
 
 
