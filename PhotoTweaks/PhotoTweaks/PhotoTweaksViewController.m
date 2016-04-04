@@ -56,6 +56,16 @@
 
 }
 
+- (void) updateImage{
+    CGFloat bnIntensity;
+    if([self.bnBtn isSelected]){
+        bnIntensity=1.;
+    }else{
+        bnIntensity=0.;
+    }
+    self.image=[self transformImage:self.sourceImage withBnValue:self.bnSlider.value withBnIntensity:bnIntensity];
+}
+
 -(void) setImage:(UIImage *)image{
     _image=image;
     self.photoView.photoContentView.image=image;
@@ -176,13 +186,43 @@
     self.bnSlider.value = 0.5;
     self.bnSlider.hidden=YES;
     [self.view addSubview:self.bnSlider];
+
+    self.colorSlider=[[UISlider alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.view.frame)-80, CGRectGetWidth(self.view.frame), 40 )];
+    [self.colorSlider addTarget:self action:@selector(colorSliderChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.colorSlider setBackgroundColor:[UIColor clearColor]];
+    self.colorSlider.minimumValue = 0.0;
+    self.colorSlider.maximumValue = 1.0;
+    self.colorSlider.continuous = YES;
+    self.colorSlider.value = 0.5;
+    self.colorSlider.hidden=YES;
+    [self.view addSubview:self.colorSlider];
+
+    self.lightSlider=[[UISlider alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.view.frame)-80, CGRectGetWidth(self.view.frame), 40 )];
+    [self.lightSlider addTarget:self action:@selector(lightSliderChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.lightSlider setBackgroundColor:[UIColor clearColor]];
+    self.lightSlider.minimumValue = 0.0;
+    self.lightSlider.maximumValue = 1.0;
+    self.lightSlider.continuous = YES;
+    self.lightSlider.value = 0.5;
+    self.lightSlider.hidden=YES;
+    [self.view addSubview:self.lightSlider];
     
     [self setupWheel];
 }
 
 - (void) bnSliderChanged:(id) sender{
     NSLog(@"BN slider changed:%f",self.bnSlider.value);
-    self.image=[self transformImage:self.sourceImage withBnValue:self.bnSlider.value withBnIntensity:1.];
+    [self updateImage];
+}
+
+- (void) colorSliderChanged:(id) sender{
+    NSLog(@"COLOR slider changed:%f",self.colorSlider.value);
+    [self updateImage];
+}
+
+- (void) lightSliderChanged:(id) sender{
+    NSLog(@"LIGHT slider changed:%f",self.lightSlider.value);
+    [self updateImage];
 }
 
 - (void) wheelDidChangeValue:(CGFloat)newValue{
@@ -235,36 +275,65 @@
 - (void)bnBtnTapped
 {
     if ([self.bnBtn isSelected]){
-        [self.bnBtn setSelected:NO];
-        self.bnBtn.backgroundColor=[UIColor blackColor];
-        self.bnSlider.hidden=YES;
+        [self deselectButton:self.bnBtn];
     } else{
-        [self.bnBtn setSelected:YES];
-        self.bnBtn.backgroundColor=[UIColor whiteColor];
+        [self selectButton:self.bnBtn];
+        [self deselectButton:self.self.colorBtn];
+        [self deselectButton:self.self.lightBtn];
+    }
+    [self updateImage];
+}
+
+- (void) deselectButton:(UIButton*) button{
+    [button setSelected:NO];
+    button.backgroundColor=[UIColor blackColor];
+    if (button==self.bnBtn){
+        self.bnSlider.hidden=YES;
+    }else if (button==self.colorBtn){
+        self.colorSlider.hidden=YES;
+    }else if (button==self.lightBtn){
+        self.lightSlider.hidden=YES;
+    }
+}
+
+- (void) selectButton:(UIButton*) button{
+    [button setSelected:YES];
+    button.backgroundColor=[UIColor whiteColor];
+    if (button==self.bnBtn){
         self.bnSlider.hidden=NO;
+        self.colorSlider.hidden=YES;
+        self.lightSlider.hidden=YES;
+    }else if (button==self.colorBtn){
+        self.colorSlider.hidden=NO;
+        self.bnSlider.hidden=YES;
+        self.lightSlider.hidden=YES;
+    }else if (button==self.lightBtn){
+        self.lightSlider.hidden=NO;
+        self.colorSlider.hidden=YES;
+        self.bnSlider.hidden=YES;
     }
 }
 
 - (void)colorBtnTapped
 {
     if ([self.colorBtn isSelected]){
-        [self.colorBtn setSelected:NO];
-        self.colorBtn.backgroundColor=[UIColor blackColor];
+        [self deselectButton:self.colorBtn];
     } else{
-        [self.colorBtn setSelected:YES];
-        self.colorBtn.backgroundColor=[UIColor whiteColor];
+        [self selectButton:self.colorBtn];
+        [self deselectButton:self.lightBtn];
     }
+    [self updateImage];
 }
 
 - (void)lightBtnTapped
 {
     if ([self.lightBtn isSelected]){
-        [self.lightBtn setSelected:NO];
-        self.lightBtn.backgroundColor=[UIColor blackColor];
+        [self deselectButton:self.lightBtn];
     } else{
-        [self.lightBtn setSelected:YES];
-        self.lightBtn.backgroundColor=[UIColor whiteColor];
+        [self selectButton:self.lightBtn];
+        [self deselectButton:self.colorBtn];
     }
+    [self updateImage];
 }
 
 
