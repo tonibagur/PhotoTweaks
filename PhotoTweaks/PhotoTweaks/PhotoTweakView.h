@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#define IMAGE_RATIO 0.5
 
 @class CropView;
 

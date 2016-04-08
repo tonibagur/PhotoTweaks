@@ -490,7 +490,7 @@ typedef NS_ENUM(NSInteger, CropCornerType) {
         if (self.singleMode){
             bounds2 = CGRectMake(0, 0, self.frame.size.width, self.frame.size.width);
         } else{
-            bounds2 = CGRectMake(0, 0, self.frame.size.height*0.48*0.9, self.frame.size.height*0.9);
+            bounds2 = CGRectMake(0, 0, self.frame.size.height*IMAGE_RATIO*0.9, self.frame.size.height*0.9);
         }
         
         _originalSize = bounds.size;
