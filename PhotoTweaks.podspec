@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name             = 'PhotoTweaks'
-  spec.version          = '2.0.1'
+  spec.version          = '2.0.2'
   spec.license          = 'MIT' 
   spec.homepage         = 'https://github.com/itouch2/PhotoTweaks'
   spec.authors          = {'Tu You' => 'yoututouch@gmail.com'}
